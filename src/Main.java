@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
@@ -15,13 +16,14 @@ public class Main {
     //Global variables
     public static Scanner inputOrder = new Scanner(System.in);
     public static Scanner inputID = new Scanner(System.in);
-    public static String iID = inputID.toString();
-    public static float balance = (float) 19.01;
+    public static float balance = (float) 0.00;
     public static CustomerQueue queue;
     public static CustomerData userData;
     public static CustomerRequest currentRequest = new CustomerRequest();
 
+
     public static void main(String[] args) throws FileNotFoundException {
+        // load the queue at some point here
         while (currentState != State.STOP){
             switch (currentState){
                 default: break;
@@ -57,19 +59,43 @@ public class Main {
         System.out.println("System Initialization...");
         System.out.println("Load customer database...");
         userData = new CustomerData();
-        System.out.println("Initializing queue...");
-        queue = new CustomerQueue(100);
 
+        System.out.println("Initializing queue...");
+        queue = new CustomerQueue(110);
+        // 110 to demonstrate push/pop. this implementation should be deployed from CustomerData and will be when possible.
+        try (Scanner scanner = new Scanner(new File("BankUserDataset100.csv"))) {
+
+            //Initialise your members here. After this point, you should already
+            //have a ready-to-use "database" for user account information
+
+            scanner.useDelimiter("\r\n");
+
+            while(scanner.hasNext()){
+                String[] currentLine = scanner.next().split(",");
+                String currentID = currentLine[0];
+                float currentBalance = Float.parseFloat(currentLine[1]);
+                //System.out.println("Loading..."+currentID+"\t£"+currentBalance);
+                //Load currentID and currentBalance into your underlying data structure
+                //one by one inside the loop. The loop will stop after reading the
+                //last data point in the file.
+                queue.addToQueue(currentBalance, currentID);
+                // obvs need to come back to this but should run for now
+
+            }
+            queue.printItems();
+        }
         currentState = State.WELCOME;
     }
 
     private static void state_welcome() {
         System.out.println("\n\n\n==Telephone Banking Control Centre==");
-        System.out.println("Choose the index number from following options:\n1. Get the next customer\n2. Queueing a new customer\n3. Check current queue\n4. Quit");
+        System.out.println("Choose the index number from following options:\n1. Get the next customer\n2. Queueing a new customer\n3. Check current queue\n4. Open new account\n5. Quit.");
+        // can alter this to a separate 'TASK' thing as OG intended but leave for now.
         if (inputOrder.hasNext("1")) currentState = State.POP;
         if (inputOrder.hasNext("2")) currentState = State.PUSH;
         if (inputOrder.hasNext("3")) currentState = State.LIST_ALL;
-        if (inputOrder.hasNext("4")) currentState = State.STOP;
+        if (inputOrder.hasNext("4")) currentState = State.TASK;
+        if (inputOrder.hasNext("5")) currentState = State.STOP;
         inputOrder.next();
     }
 
@@ -83,17 +109,29 @@ public class Main {
     }
 
     private static void state_Q_push() {
-        System.err.println("'Push a new customer to the queue' function is not implemented");//Delete this statement after the function is fully developed
+//        System.err.println("'Push a new customer to the queue' function is not implemented");//Delete this statement after the function is fully developed
+        System.out.println("Input new customer ID to push new customer to queue");
+        String iID = inputID.nextLine();
         CustomerRequest newRequest = new CustomerRequest();
         queue.addToQueue(balance, iID);
+        // this should just be simple add to back of queue
+        // was previously WELCOME
         currentState = State.WELCOME;
     }
+    // leave weird random selection as is but also add option to choose the requests.
+    // now implement that functionality
 
     private static void state_Q_pop() {
-        System.err.println("'Pop a new customer from the queue' function is not implemented");//Delete this statement after the function is fully developed
+        // get front and remove from front, not back
+        // getFront()
+        // and then remove front
+        // possible change to LL needed
+//        System.err.println("'Pop a new customer from the queue' function is not implemented");//Delete this statement after the function is fully developed
+        System.out.println("Remove from Queue");
+        queue.removeFromQueue();
         currentRequest.newRequest();//replace this statement by your Pop function
-        //currentState = State.TASK;//Uncomment this statement after the Pop function is fully developed
-        currentState = State.WELCOME;//Delete this statement after the function is fully developed
+        // implement the pop display here???
+        currentState = State.TASK;//Uncomment this statement after the Pop function is fully developed
 
     }
 
@@ -105,25 +143,32 @@ public class Main {
             case 0: System.out.println("open a new account");
                 System.out.println("Please input a new account ID:");
                 currentRequest.id = inputID.nextLine();
+                // presumably this gets addded to the queue, in specifics. should also be initialised with a balance
+                // can we add to file? idk? do we need to
                 currentState = State.NEW;
                 break;
             case 1: System.out.println("close the account");
                 System.out.println("Please input the account ID:");
+                // close SPECIFIC account, need to alter the remove function to take ID and search for
                 currentRequest.id = inputID.nextLine();
                 currentState = State.REMOVE;
                 break;
             case 2: System.out.println("check balance");
+                // search the queue for the ID
                 System.out.println("Please input the account ID:");
                 currentRequest.id = inputID.nextLine();
                 currentState = State.DISPLAY;
                 break;
             case 3: System.out.println("save £"+currentRequest.amountToChange);
                 System.out.println("Please input the account ID:");
+                // likewise, search and add the money to the corresponding balance
+                // binary search on q? would need to be sorted.
                 currentRequest.id = inputID.nextLine();
                 currentState = State.SAVE;
                 break;
             case 4: System.out.println("withdraw £"+currentRequest.amountToChange);
                 System.out.println("Please input the account ID:");
+                // search and subtract
                 currentRequest.id = inputID.nextLine();
                 currentState = State.WITHDRAW;
                 break;

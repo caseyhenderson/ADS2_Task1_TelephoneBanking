@@ -9,8 +9,10 @@ public class CustomerData {
 
             //Initialise your members here. After this point, you should already
             //have a ready-to-use "database" for user account information
+            final CustomerQueue DBQueue = new CustomerQueue(100);
+
             scanner.useDelimiter("\r\n");
-            CustomerQueue BalanceQueue = new CustomerQueue(100);
+
             while(scanner.hasNext()){
                 String[] currentLine = scanner.next().split(",");
                 String currentID = currentLine[0];
@@ -19,12 +21,11 @@ public class CustomerData {
                 //Load currentID and currentBalance into your underlying data structure
                 //one by one inside the loop. The loop will stop after reading the
                 //last data point in the file.
-
-                BalanceQueue.addToQueue(currentBalance, currentID);
+                DBQueue.addToQueue(currentBalance, currentID);
                 // obvs need to come back to this but should run for now
 
             }
-            BalanceQueue.printItems();
+            DBQueue.printItems();
         }
         catch (FileNotFoundException e){
             System.err.println(e.getLocalizedMessage());

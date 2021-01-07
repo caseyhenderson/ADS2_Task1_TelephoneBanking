@@ -18,6 +18,7 @@ public class CustomerRequest {
 
     CustomerRequest(){
         request = 0;
+        // no point setting this to 'RAND' cause it's the same every time. people should really be given choice and idk why this isn't implemented
         amountToChange = 0.0;
         rand=new Random();
     }

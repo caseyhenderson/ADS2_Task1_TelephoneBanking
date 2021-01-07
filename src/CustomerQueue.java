@@ -33,7 +33,7 @@ public class CustomerQueue {
         count--;
     }
     // will need to change 'float' to whatever customer is actually stored as, fine now though
-
+    // removeFromQueue only takes front
     public void addToQueue(float item, String ID)
     {
         if (checkFull())
@@ -42,7 +42,7 @@ public class CustomerQueue {
             // preventing Overflow
             System.exit(1);
         }
-        System.out.println("Inserting " + item);
+        System.out.println("Inserting " + item +", " + ID);
         rear = (rear + 1)% QCap;
         // PROBLEM IS HERE WITH WHATEVER'S CAUSING US TO BE OUT OF BOUNDS
         // fixed now by altering size and qcap, size is parameter QCap is defined value
@@ -75,6 +75,15 @@ public class CustomerQueue {
         }
         return body[front];
 
+    }
+    public String getFrontID()
+    {
+        if(checkEmpty()) {
+            System.out.println("Empty so nothing at front");
+            //underflow
+            System.exit(1);
+        }
+        return IDBody[front];
     }
 
     public int queueSize()
