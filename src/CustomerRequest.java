@@ -18,7 +18,7 @@ public class CustomerRequest {
 
     CustomerRequest(){
         rand=new Random();
-        request = rand.nextInt(4);
+        request = rand.nextInt(5);
         // something here to set to random AND stay that way might work
         // no point setting this to 'RAND' cause it's the same every time. people should really be given choice and idk why this isn't implemented
         amountToChange = 0.00;
@@ -27,6 +27,9 @@ public class CustomerRequest {
     public int newRequest() {
         //Generate a random amount of money (0.1~10.1) to change (only for open/save/withdraw)
         double random = rand.nextDouble()*10.00;
+        random = random*100;
+        random = Math.round(random);
+        random = random/100;
 
         //Generate a number for random tasks between 0-99
         int rand_int = rand.nextInt(100);

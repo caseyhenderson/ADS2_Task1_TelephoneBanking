@@ -15,6 +15,9 @@ public class Customer {
 
     public double getBalance()
     {
+        balance = balance *100;
+        balance = Math.round(balance);
+        balance = balance/100;
         return this.balance;
     }
     public void setBalance(double newBalance)
@@ -28,6 +31,10 @@ public class Customer {
     public int getRequestNo()
     {
         return this.request.request;
+    }
+    public void setRequestNo(int requestNo)
+    {
+        this.request.request = requestNo;
     }
 
     public void setRequest(CustomerRequest request) {

@@ -1,28 +1,28 @@
 public class CustomerQueue {
-//    private double body[];
+    //    private double body[];
 //    private String IDBody[];
     private Customer arr[];
-    private int front;
-    private int rear;
-    private int size;
-    private int count;
+    int front = 0;
+    int rear = 1;
+    private int capacity = 100;
+    private int size = 0;
+    private int count = 0;
 
 
     // Default Constructor
-    CustomerQueue(int size) {
-        this.size = size;
-        arr = new Customer[size];
+    CustomerQueue() {
+//        this.size = size;
+        arr = new Customer[this.capacity];
 //        body = new double[size];
 //        IDBody = new String[size];
-        front = 0;
-        rear = -1;
-        count = 0;
+//        front = 0;
+//        rear = -1;
+//        count = 0;
 //
     }
 
 
-
-//    public String[] getIDBody() {
+    //    public String[] getIDBody() {
 //        return this.IDBody;
 //    }
 //
@@ -30,16 +30,15 @@ public class CustomerQueue {
 //    {
 //        return this.body;
 //    }
-    public int getCount()
-    {
+    public int getCount() {
         return this.count;
     }
-    public Customer[] getArr()
-    {
+
+    public Customer[] getArr() {
         return this.arr;
     }
-    public Customer[] setArr(Customer[] arr)
-    {
+
+    public Customer[] setArr(Customer[] arr) {
         arr = this.arr;
         return arr;
     }
@@ -89,34 +88,77 @@ public class CustomerQueue {
 //
 //        }
 //    }
-    public void addCQ(Customer newCustomer)
-    {
-        if (checkFull())
-        {
-            System.out.println("The queue is full and therefore nothing can be added to it.");
+    public void addCQ(Customer newCustomer) {
+        if (checkFull()) {
+            System.out.println("The queue is full and therefore nothing can be added to it. Increasing capacity now.");
             // prevent overflow
-            System.exit(1);
+            increaseQCap();
+
         }
-        System.out.println("Inserting " + newCustomer.getID() + ", "+newCustomer.getBalance());
-        rear = (rear + 1)% size;
+        rear++;
+        if (rear >= arr.length && size != arr.length) {
+            rear = 0;
+        }
         arr[rear] = newCustomer;
-        count++;
+        size++;
+        System.out.println("Inserting " + newCustomer.getID() + ", " + newCustomer.getBalance() + ", " + newCustomer.getRequestNo());
+
+
+/*         rear = (rear + 1)% size;
+         arr[rear] = newCustomer;
+         count++*/
         // working, now for removal
     }
-    public CustomerQueue popCQ(Customer removeCustomer)
-    {
+
+
+    public CustomerQueue popQ(Customer removeCustomer) {
+        Customer[] newArr = new Customer[arr.length - 1];
+        CustomerQueue newQueue = new CustomerQueue();
+        if (checkEmpty()) {
+            System.out.println("Underflow. Queue is empty and we cannot remove anything from it.");
+
+        }
+        front++;
+        for (int i = 0, j = 0; i < size; i++) {
+            if (arr[i].getID() != removeCustomer.getID()) {
+                newArr[j++] = arr[i];
+            }
+        }
+        for (int i = 0; i < newArr.length; i++) {
+            if (newArr[i] != null) {
+                newQueue.addCQ(newArr[i]);
+            }
+        }
+        if (front > arr.length - 1) {
+            System.out.println("Removing" + removeCustomer.getID() + ", " + removeCustomer.getBalance() + ", " + removeCustomer.getRequestNo());
+            front = 0;
+
+        } else {
+            System.out.println("Removing" + removeCustomer.getID() + ", " + removeCustomer.getBalance() + ", " + removeCustomer.getRequestNo());
+
+        }
+        size--;
+        return newQueue;
+        // seems to work now
+
+    }
+//        front = (front + 1) % size; // modulo stops it going over the new size (now thing has been removed)
+//        count--;
+//        size--;
+
+
+    public CustomerQueue popCQ(Customer removeCustomer) {
         // pops customer from queue (removes first one) and displays
-        if(checkEmpty())
-        {
+        if (checkEmpty()) {
             System.out.println("The queue is empty and therefore nothing can be removed from it.");
             System.exit(1);
         }
-        System.out.println("Removing" + removeCustomer.getID() + ", "+removeCustomer.getBalance());
-        Customer[] newArr = new Customer[arr.length-1];
+        System.out.println("Removing" + removeCustomer.getID() + ", " + removeCustomer.getBalance());
+        Customer[] newArr = new Customer[arr.length - 1];
 //        Customer testCustomer = new Customer();
 //        testCustomer.setBalance(1);
 //        testCustomer.setID("testy testy boi");
-        CustomerQueue newQueue = new CustomerQueue(110);
+        CustomerQueue newQueue = new CustomerQueue();
 //        for (int i = 0, j = 0; i<newQueue.queueSize(); i++)
 //        {
 ////            if (!arr[i].getID().equals(removeCustomer.getID()))
@@ -135,17 +177,13 @@ public class CustomerQueue {
 ////
 ////            }
 ////        }
-        for (int i = 0, j = 0; i <queueSize(); i++)
-        {
-            if (arr[i].getID() != removeCustomer.getID())
-            {
+        for (int i = 0, j = 0; i < queueSize(); i++) {
+            if (arr[i].getID() != removeCustomer.getID()) {
                 newArr[j++] = arr[i];
             }
         }
-        for (int i = 0; i< newArr.length; i++)
-        {
-            if(newArr[i]!=null)
-            {
+        for (int i = 0; i < newArr.length; i++) {
+            if (newArr[i] != null) {
                 newQueue.addCQ(newArr[i]);
             }
         }
@@ -164,27 +202,21 @@ public class CustomerQueue {
 
     // will need to change 'double' to whatever customer is actually stored as, fine now though
     // removeFromQueue only takes front
-    public CustomerQueue removeSpecific(Customer removeCustomer)
-    {
-        if(checkEmpty())
-        {
+    public CustomerQueue removeSpecific(Customer removeCustomer) {
+        if (checkEmpty()) {
             System.out.println("The queue is empty and therefore nothing can be removed from it.");
             System.exit(1);
         }
-        System.out.println("Removing" + removeCustomer.getID() + ", "+removeCustomer.getBalance());
-        Customer[] newArr = new Customer[arr.length-1];
-        CustomerQueue newQueue = new CustomerQueue(110);
-        for (int i = 0, j = 0; i <queueSize(); i++)
-        {
-            if (arr[i].getID() != removeCustomer.getID())
-            {
+        System.out.println("Removing" + removeCustomer.getID() + ", " + removeCustomer.getBalance());
+        Customer[] newArr = new Customer[arr.length - 1];
+        CustomerQueue newQueue = new CustomerQueue();
+        for (int i = 0, j = 0; i < queueSize(); i++) {
+            if (arr[i].getID() != removeCustomer.getID()) {
                 newArr[j++] = arr[i];
             }
         }
-        for (int i = 0; i< newArr.length; i++)
-        {
-            if(newArr[i]!=null)
-            {
+        for (int i = 0; i < newArr.length; i++) {
+            if (newArr[i] != null) {
                 newQueue.addCQ(newArr[i]);
             }
         }
@@ -227,9 +259,8 @@ public class CustomerQueue {
 //
 //    }
 
-    public Customer getFront()
-    {
-        if(checkEmpty()) {
+    public Customer getFront() {
+        if (checkEmpty()) {
             System.out.println("Empty so nothing at front");
             //underflow
             System.exit(1);
@@ -239,40 +270,64 @@ public class CustomerQueue {
     }
 
 
-    public int queueSize()
-    {
+    public int queueSize() {
         return count;
     }
 
 
-    public boolean checkEmpty()
-    {
-        return (queueSize() == 0);
+    public boolean checkEmpty() {
+        boolean empty = false;
+        if (size == 0) {
+            empty = true;
+        }
+        return empty;
         //  check this
     }
 
-    public boolean checkFull()
-    {
-        return (queueSize() == size);
+    public boolean checkFull() {
+        boolean full = false;
+        if (size == arr.length) {
+            full = true;
+        }
+        return full;
+    }
+
+    public void increaseQCap() {
+        int newCap = this.arr.length * 2;
+        Customer[] newArray = new Customer[newCap];
+        int tempFront = front;
+        int index = -1;
+        while (true) {
+            newArray[++index] = this.arr[tempFront];
+            tempFront++;
+            if (tempFront == this.arr.length) {
+                tempFront = 0;
+            }
+            if (size == index + 1) {
+                break;
+            }
+
+        }
+        this.arr = newArray;
+        System.out.println("New queue cap: " + this.arr.length);
+        this.front = 0;
+        this.rear = index;
     }
 
     public void printItems() // can add queue as parameter, unclear if necessary or not.
     {
-        for (int i = 0; i<size; i++)
-        {
-            if (this.arr[i] != null)
-            {
+        for (int i = 0; i < size; i++) {
+            if (this.arr[i] != null) {
                 System.out.println("ID: " + arr[i].getID());
-                System.out.println("Balance: "+arr[i].getBalance());
-                System.out.println("Request: "+arr[i].getRequestNo());
+                System.out.println("Balance: " + arr[i].getBalance());
+                System.out.println("Request: " + arr[i].getRequestNo());
                 // something to do with this
                 // all request are currently the same, annoyingly
                 // problem seemingly solved
 
             }
             // this won't do it but might be a sticking plaster
-            else
-            {
+            else {
                 System.out.println("Empty space");
 
             }
@@ -280,8 +335,67 @@ public class CustomerQueue {
 //            System.out.println("Item: " + body[i] );
 //            System.out.println("ID: " + IDBody[i]);
         }
-    // return to check this
+        // return to check this
 
     }
+
+    public boolean searchQueue(String searchID) {
+        // search algo
+        for (int i = 0; i < size; i++) {
+            if (this.arr[i] != null) {
+                if (this.arr[i].getID().equals(searchID)) {
+                    System.out.println("ID already used");
+                    return true;
+                }
+
+            }
+        }
+        return false;
+
+
+    }
+
+
+//        int pivot;
+//
+//        if (arr[end]!=null) {
+//            pivot = arr[end].getRequestNo();
+//            int i = 0;
+//
+//            for (int j = begin; j < end; j++) {
+//                int tempInt = 0;
+//                if (this.arr[j] != null) {
+//                    tempInt = this.arr[j].getRequestNo();
+//                }
+//
+//                if (tempInt <= pivot && this.arr[i] != null && this.arr[j] != null) {
+//                    i++;
+//                    int swapTemp = this.arr[i].getRequestNo();
+//                    arr[i].setRequestNo(this.arr[j].getRequestNo());
+//                    // arr[i] = arr[j]
+//                    arr[j].setRequestNo(swapTemp);
+//                    // arr[j] = swapTemp
+//                }
+//            }
+//            int swapTemp = this.arr[i + 1].getRequestNo();
+//            Customer templInt;
+//
+//            if (this.arr[end] != null) {
+//                templInt = this.arr[end];
+//                this.arr[i + 1].setRequestNo(this.arr[end].getRequestNo());
+//                templInt.setRequestNo(swapTemp);
+//            }
+//            return i + 1;
+//        }
+//
+////        this.arr[end].setRequestNo(swapTemp);
+//        else
+//        {
+//            return 0;
+//        }
+//
+//
+//    }
+
 
 }

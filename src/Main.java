@@ -123,7 +123,7 @@ public class Main {
         System.out.println("Input new customer ID to push new customer to queue");
         String iID = inputID.nextLine();
         Customer newCustomer = new Customer();
-        newCustomer.setBalance(balance);
+        newCustomer.setBalance(balance); // always initialised at zero
         newCustomer.setID(iID);
         CustomerRequest newRequest = new CustomerRequest();
         newCustomer.setRequest(newRequest);
@@ -159,13 +159,13 @@ public class Main {
         String toRemove = inputID.nextLine();
         Customer removeCustomer;
         removeCustomer = queue.getFront();
-        queue.popCQ(removeCustomer);
-        queue = queue.popCQ(removeCustomer);
+        queue.popQ(removeCustomer);
+        queue = queue.popQ(removeCustomer);
         // no methods of removal/replacement are working rn
         // seemingly this is what isn't working as add to queue DOES
 //        currentRequest.newRequest();//replace this statement by your Pop function
         // implement the pop display here???
-        currentState = State.TASK;//Uncomment this statement after the Pop function is fully developed
+        currentState = State.WELCOME;//Uncomment this statement after the Pop function is fully developed
 
     }
 
@@ -177,18 +177,29 @@ public class Main {
             //this is always case 0?
             case 0: System.out.println("open a new account");
                 System.out.println("Please input a new account ID:");
+                // CHECK IF HAS BEEN USED
                 // and starting balance?????? amount to change. how to implement???
                 currentRequest.id = inputID.nextLine();
-                Customer newCustomer = new Customer();
-                newCustomer.setID(currentRequest.id);
-                newCustomer.setBalance(balance);// needs fixing to set balance
+                if(queue.searchQueue(currentRequest.id) == true)
+                {
+                    System.out.println("ID already used");
+                    currentState = State.NEW;
+                    break;
+                }
+                else {
+                    Customer newCustomer = new Customer();
+                    newCustomer.setID(currentRequest.id);
+                    newCustomer.setBalance(balance);
+                    // again always initialised at zero balance - logic is that they add money through deposit
+                    newCustomer.setRequest(currentRequest);// needs fixing to set balance
 //                newCustomer.setRequest(currentRequest);
-                // request can also go here if needs be
-                // presumably this gets added to the queue, in specifics. should also be initialised with a balance
-                // can we add to file? idk? do we need to
-                queue.addCQ(newCustomer);
-                currentState = State.NEW;
-                break;
+                    // request can also go here if needs be
+                    // presumably this gets added to the queue, in specifics. should also be initialised with a balance
+                    // can we add to file? idk? do we need to
+                    queue.addCQ(newCustomer);
+                    currentState = State.NEW;
+                    break;
+                }
             case 1: System.out.println("close the account");
                 System.out.println("Please input the account ID:");
                 // close SPECIFIC account, need to alter the remove function to take ID and search for
@@ -196,10 +207,10 @@ public class Main {
                 Customer closeCustomer = new Customer();
                 closeCustomer.setID(currentRequest.id);
 //                closeCustomer.setRequest(currentRequest);
-                queue.popCQ(closeCustomer);
+                queue.popQ(closeCustomer);
                 // in theory this might work without specific method but we will see
                 // alter here for specifics
-//                queue.popCQ(queue.getFront());
+                queue.popQ(queue.getFront());
                 currentState = State.REMOVE;
                 break;
             case 2: System.out.println("check balance");
@@ -212,24 +223,26 @@ public class Main {
                 System.out.println("Balance is " + cBalance);
                 currentState = State.DISPLAY;
                 break;
-            case 3: System.out.println("save £"+currentRequest.amountToChange);
+            case 3:
+                double deposit = currentRequest.amountToChange;
+                System.out.println("deposit £" + String.format("%.2f", deposit));
                 System.out.println("Please input the account ID:");
                 // likewise, search and add the money to the corresponding balance
                 // binary search on q? would need to be sorted.
                 currentRequest.id = inputID.nextLine();
                 Customer toAdd = queue.getFront();
-                double amount = currentRequest.amountToChange;
-                toAdd.setBalance(toAdd.getBalance()+amount);
-                double newBalance = toAdd.getBalance()+amount;
+                toAdd.setBalance(toAdd.getBalance()+deposit);
+                double newBalance = toAdd.getBalance()+deposit;
                 System.out.println(toAdd.getBalance());
                 currentState = State.SAVE;
                 break;
-            case 4: System.out.println("withdraw £"+currentRequest.amountToChange);
+            case 4:
+                double withdrawal = currentRequest.amountToChange;
+                System.out.println("withdraw £"+String.format("%.2f", withdrawal));
                 System.out.println("Please input the account ID:");
                 // search and subtract
                 currentRequest.id = inputID.nextLine();
                 Customer toSub = queue.getFront();
-                double withdrawal = currentRequest.amountToChange;
                 if (toSub.getBalance() > withdrawal)
                 {
                     toSub.setBalance(toSub.getBalance()-withdrawal);
