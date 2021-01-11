@@ -60,11 +60,6 @@ public class CustomerData {
                 System.out.println(sorted[X].getID());
                 SQueue.addCQ(sorted[X]);
             }
-//            quickSort(DBarr, 0, DBarr.length-1);
-//            for (int X=0; X< DBarr.length-1; X++)
-//            {
-//                System.out.println(DBarr[X].getID());
-//            }
 
 
         } catch (FileNotFoundException e) {
@@ -74,7 +69,6 @@ public class CustomerData {
 
     public CustomerQueue getDBQueue()
     {
-//        DBQueue.quickSort(DBQueue.getArr(), 0, DBQueue.getArr().length-1);
         return DBQueue;
     }
     public CustomerQueue getSQueue()
@@ -110,89 +104,10 @@ public class CustomerData {
         }
         return arr;
     }
-    public void quickSort(Customer[] arr, int begin, int end)
-    {
-        int i = begin;
-        int j = end;
-
-        if(j-i >=1)
-        {
-            String pivot = arr[i].getID();
-            while (j>i)
-            {
-                if(arr[i] != null)
-                {
-                    while(arr[i].getID().compareTo(pivot) <=0 && i< end && j>1)
-                    {
-                        i++;
-                    }
-                    if(arr[j]!=null)
-                    {
-                        while(arr[j].getID().compareTo(pivot)>=0 && j>begin && j>=1)
-                        {
-                            j--;
-                        }
-                        if(j>i)
-                        {
-                            swap(arr, i, j);
-                        }
-
-                    }
-                }
-//                while(arr[j].getID().compareTo(pivot)>=0 && j>begin && j>=1)
-//                {
-//                    j--;
-//                }
-//                if(j>i)
-//                {
-//                    swap(arr, i, j);
-//                }
-            }
-            swap(arr, begin, j);
-            quickSort(arr, begin, j-1);
-            quickSort(arr, j+1, end);
-        }
-    }
-    public void swap(Customer[] arr, int i, int j)
-    {
-        String temp = arr[i].getID();
-        arr[i].setID(arr[j].getID());
-        arr[j].setID(temp);
-    }
 
 
-//    public void quickSort(Customer[] arr, int begin, int end) {
-//        if (begin < end) {
-//
-//            int partIndex = partition(arr, begin, end);
-//            quickSort(arr, begin, partIndex - 1);
-//            quickSort(arr, partIndex + 1, end);
-//        }
-//        else
-//        {
-//            System.out.println ("An interesting error.");
-//        }
-//    }
-//
-//    private int partition(Customer[] arr, int begin, int end) {
-//        int pivot = arr[end].getRequestNo();
-//        int i = (begin-1);
-//
-//        for (int j = begin; j<end; j++)
-//        {
-//            if (arr[j].getRequestNo()<=pivot)
-//            {
-//                i++;
-//                int swapTemp = arr[i].getRequestNo();
-//                arr[i].setRequestNo(arr[j].getRequestNo());
-//                arr[j].setRequestNo(swapTemp);
-//            }
-//        }
-//        int swapTemp = arr[i+1].getRequestNo();
-//        arr[i+1].setRequestNo(arr[end].getRequestNo());
-//        arr[end].setRequestNo(swapTemp);
-//        return i+1;
-//    }
+
+
 
 
 }
