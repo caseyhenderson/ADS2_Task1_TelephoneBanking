@@ -1,12 +1,12 @@
 public class CustomerQueue {
 
-    private Customer arr[];
+    private Customer[] arr;
     int front = 0;
     int rear = 1;
     private int capacity = 100;
     private int size = 0;
-    private int count = 0;
 
+//    CustomerQueue SQueue = new CustomerQueue();
 
     // Default Constructor
     CustomerQueue() {
@@ -15,21 +15,22 @@ public class CustomerQueue {
     }
 
 
-    // check if we need these cause RN they increase space complexity
-    public int getCount() {
-        return this.count;
-    }
+    // previously used helper methods
+//    public int getCount() {
+//        return this.count;
+//    }
+//
+//    public Customer[] getArr() {
+//        return this.arr;
+//    }
+//
+//    public Customer[] setArr(Customer[] arr) {
+//        arr = this.arr;
+//        return arr;
+//    }
 
-    public Customer[] getArr() {
-        return this.arr;
-    }
+    public void pushQ(Customer newCustomer) {
 
-    public Customer[] setArr(Customer[] arr) {
-        arr = this.arr;
-        return arr;
-    }
-
-    public void addCQ(Customer newCustomer) {
         if (checkFull()) {
             System.out.println("The queue is full and therefore nothing can be added to it. Increasing capacity now.");
             // prevent overflow
@@ -55,6 +56,7 @@ public class CustomerQueue {
             System.out.println("Underflow. Queue is empty and we cannot remove anything from it.");
 
         }
+        //guarded against empty
         front++;
         for (int i = 0, j = 0; i < size; i++) {
             if (arr[i].getID() != removeCustomer.getID()) {
@@ -63,7 +65,7 @@ public class CustomerQueue {
         }
         for (int i = 0; i < newArr.length; i++) {
             if (newArr[i] != null) {
-                newQueue.addCQ(newArr[i]);
+                newQueue.pushQ(newArr[i]);
             }
         }
         if (front > arr.length - 1) {
@@ -76,11 +78,9 @@ public class CustomerQueue {
         }
         size--;
         return newQueue;
-        // seems to work now
 
     }
 
-    // Again may not be needed
 
 
 
@@ -103,7 +103,6 @@ public class CustomerQueue {
             empty = true;
         }
         return empty;
-        //  check this
     }
 
     public boolean checkFull() {
@@ -134,34 +133,31 @@ public class CustomerQueue {
         System.out.println("New queue cap: " + this.arr.length);
         this.front = 0;
         this.rear = index;
+        // expands by factor of 2 each time ensuring fewer function calls
     }
 
-    public void printItems() // can add queue as parameter, unclear if necessary or not.
+    public void printItems()
     {
         for (int i = 0; i < size; i++) {
             if (this.arr[i] != null) {
                 System.out.println("ID: " + arr[i].getID());
                 System.out.println("Balance: " + arr[i].getBalance());
                 System.out.println("Request: " + arr[i].getRequestNo());
-                // something to do with this
-                // all request are currently the same, annoyingly
-                // problem seemingly solved
-
+                // standard outputting of 3 key attributes
             }
-            // this won't do it but might be a sticking plaster
             else {
+                // handles null occurrences
                 System.out.println("Empty space");
 
             }
 
 
         }
-        // return to check this
 
     }
 
     public boolean searchQueue(String searchID) {
-        // search algo
+        // search algorithm, linear. binary was attempted but couldn't be implemented fully in time.
         for (int i = 0; i < size; i++) {
             if (this.arr[i] != null) {
                 if (this.arr[i].getID().equals(searchID)) {
@@ -175,6 +171,98 @@ public class CustomerQueue {
 
 
     }
+
+    // binary search implementation
+
+//    public int BinarySearch(Customer[] arr, String searchValue, int first, int last)
+//    {
+//        int l = 0, r = arr.length - 1;
+//        while (l <= r) {
+//            int mid = 1 + (r - l) / 2;
+//
+//            int val = searchValue.compareToIgnoreCase(this.arr[mid].getID());
+//            if (val == 0) {
+//                return mid;
+//                // search value found at mid point
+//            }
+//            if (val > 0) {
+//                l = mid + 1;
+//                // if greater than mid cut out left half
+//            } else {
+//                r = mid - 1;
+//                // and likewise for right half in inverse situation
+//            }
+//        }
+//            return -1;
+//
+//    }
+//    public int BinaryHelper()
+//    {
+//        String searchValue = "KE72150";
+//        BinarySearch(this.arr, searchValue, 0, this.arr.length-1);
+//        int result = BinarySearch(this.arr, searchValue, 0, this.arr.length-1);
+//        return result;
+//    }
+
+
+    public Customer[] InsertionSort(Customer[] arr)
+    {
+        // basic insertion sort for the array underlying all of the queue instances. returns array and ultimately queue sorted alphabetically by ID.
+        int n = arr.length;
+        String temp;
+
+        for (int i = 0; i<n; ++i)
+        {
+            // guarding against null again
+            if(arr[i] != null)
+            {
+                for(int j = 0; j<n; j++)
+                {
+                    if(arr[j] != null)
+                    {
+                        if(arr[i].getID().compareToIgnoreCase(arr[j].getID())<0)
+                        {
+                            temp = arr[i].getID();
+                            arr[i].setID(arr[j].getID());
+                            arr[j].setID(temp);
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+        return arr;
+    }
+    // helper method
+//    public Customer[] getSorted()
+//    {
+//        Customer sorted[] = InsertionSort(arr);
+////        for (int X = 0; X< sorted.length-1; X++) {
+//////            System.out.println(sorted[X].getID());
+////        }
+//        return sorted;
+//
+//    }
+    public CustomerQueue getSortedAsQ()
+    {
+        CustomerQueue SQueue = new CustomerQueue();
+        InsertionSort(arr);
+        Customer[] sorted = InsertionSort(arr);
+
+        for (int X = 0; X< sorted.length-1; X++)
+        {
+            if(sorted[X]!=null)
+            {
+                System.out.println(sorted[X].getID());
+                SQueue.pushQ(sorted[X]);
+            }
+        }
+        return SQueue;
+    }
+
 
 
 

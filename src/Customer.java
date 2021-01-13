@@ -24,18 +24,20 @@ public class Customer {
     {
         balance = newBalance;
     }
-    public CustomerRequest getRequest()
-    {
-        return this.request;
-    }
+//    public CustomerRequest getRequest()
+//    {
+//        return this.request;
+//    }
+    // helper get method, never used
     public int getRequestNo()
     {
         return this.request.request;
     }
-    public void setRequestNo(int requestNo)
-    {
-        this.request.request = requestNo;
-    }
+//    public void setRequestNo(int requestNo)
+//    {
+//        this.request.request = requestNo;
+//    }
+    // set method, never used
 
     public void setRequest(CustomerRequest request) {
         this.request = request;
